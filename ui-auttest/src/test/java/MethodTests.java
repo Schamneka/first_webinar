@@ -1,6 +1,5 @@
 import org.example.Methods;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,12 +14,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
+@Tag("autotests")
 public class MethodTests {
 
     private static final Random RANDOM = new Random();
 
+    @BeforeEach
+    void beforeTest() {
+        System.out.println("========================Test method start");
+    }
+
+    @AfterEach
+    void afterTest() {
+        System.out.println("Test method end");
+        System.out.println("========================");
+    }
+
+
     // Задача 1 (isEven)
-    @Test
+    @RepeatedTest(value = 10, name = "Задача 1: isEven, запуск {currentRepetition}/{totalRepetitions}")
     void isEvenTest() {
         int number = randomInt(-1_000, 1_001);
         boolean expected = (number % 2 == 0);
@@ -31,7 +43,7 @@ public class MethodTests {
     }
 
     //Задача 2 (checkAccess)
-    @Test
+    @RepeatedTest(value = 10, name = "Задача 2: checkAccess, запуск {currentRepetition}/{totalRepetitions}")
     void checkAccessTest() {
         int ageCheck = randomInt(0, 101);
 
@@ -44,7 +56,7 @@ public class MethodTests {
     }
 
     //Задача 3 (isPositive)
-    @Test
+    @RepeatedTest(value = 10, name = "Задача 3: isPositive, запуск {currentRepetition}/{totalRepetitions}")
     void isPositiveTest() {
         int sign = randomInt(-1_000, 1_001);
         boolean expected = (sign >= 0);
@@ -55,9 +67,9 @@ public class MethodTests {
     }
 
     //Задача 4 (getGrade)
-    @Test
+    @RepeatedTest(value = 10, name = "Задача 4: getGrade, запуск {currentRepetition}/{totalRepetitions}")
     void getGradeTest() {
-        int point = randomInt(0, 101);
+        int point = randomInt(-101, 101);
         String expected = expectedGrade(point);
 
         System.out.println("Задача 4: " + Methods.getGrade(point));
@@ -66,7 +78,7 @@ public class MethodTests {
     }
 
     //Задача 5 (blastOff)
-    @RepeatedTest(5)
+    @RepeatedTest(value = 10, name = "Задача 5: blastOff, запуск {currentRepetition}/{totalRepetitions}")
     void blastOffTest() {
         int start = randomInt(1, 11);
         String expected = expectedBlastOff(start);
@@ -77,7 +89,7 @@ public class MethodTests {
     }
 
     //Задача 6 (sumToN)
-    @RepeatedTest(5)
+    @RepeatedTest(value = 10, name = "Задача 6: sumToN, запуск {currentRepetition}/{totalRepetitions}")
     void sumToNTest() {
         int sumOfAll = randomInt(1, 101);
         int expected = expectedSumToN(sumOfAll);
@@ -88,7 +100,7 @@ public class MethodTests {
     }
 
     //Задача 7 (hasBug)
-    @RepeatedTest(5)
+    @RepeatedTest(value = 10, name = "Задача 7: hasBug, запуск {currentRepetition}/{totalRepetitions}")
     void hasBugTest() {
         String[] messages = generateMessagesWithOptionalBug();
         boolean expected = containsBug(messages);
@@ -99,7 +111,7 @@ public class MethodTests {
     }
 
     //Задача 8 (getEvenInRange)
-    @RepeatedTest(5)
+    @RepeatedTest(value = 10, name = "Задача 8: getEvenInRange, запуск {currentRepetition}/{totalRepetitions}")
     void getEvenInRangeTest() {
         int start = randomInt(-30, 31);
         int end = randomInt(start, 51);
