@@ -21,28 +21,6 @@ tasks.test {
     useJUnitPlatform()
 }
 
-// Задача 1: запускает все тесты в проекте
-tasks.register<Test>("runAllTests") {
-    group = "verification"
-    description = "Запускает все тесты проекта"
-    useJUnitPlatform()
-    testClassesDirs = sourceSets["test"].output.classesDirs
-    classpath = sourceSets["test"].runtimeClasspath
-}
-
-// Задача 2: запускается после завершения первой и пишет в консоль сообщение
-tasks.register("afterTests") {
-    group = "verification"
-    description = "Печатает сообщение после прогона тестов"
-    doLast {
-        println("Test run is over")
-    }
-}
-
-tasks.named("afterTests") {
-    dependsOn("runAllTests")
-}
-
 // Ручной чекер: TEST PASSED / TEST FAILED
 tasks.register<JavaExec>("manualTests") {
     group = "verification"

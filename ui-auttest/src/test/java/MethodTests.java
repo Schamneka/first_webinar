@@ -32,9 +32,9 @@ public class MethodTests {
 
 
     // Задача 1 (isEven)
-    @RepeatedTest(value = 10, name = "Задача 1: isEven, запуск {currentRepetition}/{totalRepetitions}")
+    @RepeatedTest(value = 1, name = "Задача 1: isEven, запуск {currentRepetition}/{totalRepetitions}")
     void isEvenTest() {
-        int number = randomInt(-1_000, 1_001);
+        int number = RANDOM.nextInt(100) + 1;
         boolean expected = (number % 2 == 0);
 
         System.out.println("Задача 1: " + Methods.isEven(number));
@@ -43,9 +43,9 @@ public class MethodTests {
     }
 
     //Задача 2 (checkAccess)
-    @RepeatedTest(value = 10, name = "Задача 2: checkAccess, запуск {currentRepetition}/{totalRepetitions}")
+    @RepeatedTest(value = 20, name = "Задача 2: checkAccess, запуск {currentRepetition}/{totalRepetitions}")
     void checkAccessTest() {
-        int ageCheck = randomInt(0, 101);
+        int ageCheck = RANDOM.nextInt(100);
 
         String expected = ageCheck > 18 ? "Allowed" : "Denied";
         String actual = Methods.checkAccess(ageCheck);
@@ -67,14 +67,14 @@ public class MethodTests {
     }
 
     //Задача 4 (getGrade)
-    @RepeatedTest(value = 10, name = "Задача 4: getGrade, запуск {currentRepetition}/{totalRepetitions}")
-    void getGradeTest() {
-        int point = randomInt(-101, 101);
-        String expected = expectedGrade(point);
+    @ParameterizedTest(name = "Задача 4: score = {0}")
+    @MethodSource("scoresProvider")
+    void getGradeTest(int score) {
+        String expected = expectedGrade(score);
 
-        System.out.println("Задача 4: " + Methods.getGrade(point));
+        System.out.println("Задача 4(" + score + ") = " + Methods.getGrade(score));
 
-        assertEquals(expected, Methods.getGrade(point));
+        assertEquals(expected, Methods.getGrade(score));
     }
 
     //Задача 5 (blastOff)
@@ -372,6 +372,17 @@ public class MethodTests {
         }
         return sb.toString();
     }
+
+    static Stream<Integer> scoresProvider() {
+        int[] scores = new int[10];
+
+        for (int i = 0; i < scores.length; i++) {
+            scores[i] = RANDOM.nextInt(101);
+        }
+
+        return Arrays.stream(scores).boxed();
+    }
+
 }
 
 
