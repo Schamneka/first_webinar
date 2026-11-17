@@ -1,5 +1,6 @@
 package org.example;
 
+import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
@@ -17,6 +18,10 @@ public final class RestApiBuilder {
     public static final String GOODS_ADD = "/goods/add";
     public static final String GOODS_BY_ID = "/goods/{id}";
 
+
+    private static final String USER = "admin";
+    private static final String PASSWORD = "secret123";
+
     private RestApiBuilder() {
     }
 
@@ -25,6 +30,7 @@ public final class RestApiBuilder {
                 .setBaseUri(BASE_URL)
                 .setContentType(ContentType.JSON)
                 .setAccept(ContentType.JSON)
+                .setAuth(RestAssured.preemptive().basic(USER, PASSWORD))
                 .addFilter(new RequestLoggingFilter())
                 .addFilter(new ResponseLoggingFilter())
                 .build();
