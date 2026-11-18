@@ -1,9 +1,9 @@
-package org.example;
+package org.example.goods;
 
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.example.RestApiBuilder.*;
+import static org.example.goods.RestApiBuilder.*;
 
 
 public class GoodsDeleteTests extends BaseApiTest {

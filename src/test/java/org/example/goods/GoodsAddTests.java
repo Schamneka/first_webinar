@@ -1,12 +1,12 @@
-package org.example;
+package org.example.goods;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
-import static org.example.RestApiBuilder.GOODS_ADD;
-import static org.example.RestApiBuilder.uniqueName;
+import static org.example.goods.RestApiBuilder.GOODS_ADD;
+import static org.example.goods.RestApiBuilder.uniqueName;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class GoodsAddTests extends BaseApiTest {

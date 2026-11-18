@@ -1,13 +1,13 @@
-package org.example;
+package org.example.goods;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
-import static org.example.RestApiBuilder.GOODS_BY_ID;
-import static org.example.RestApiBuilder.createGood;
-import static org.example.RestApiBuilder.uniqueName;
+import static org.example.goods.RestApiBuilder.GOODS_BY_ID;
+import static org.example.goods.RestApiBuilder.createGood;
+import static org.example.goods.RestApiBuilder.uniqueName;
 
 public class GoodsPatchTests extends BaseApiTest {
 

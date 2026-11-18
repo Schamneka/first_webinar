@@ -1,4 +1,4 @@
-package org.example;
+package org.example.goods;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;

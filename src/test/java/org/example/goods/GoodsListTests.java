@@ -1,9 +1,9 @@
-package org.example;
+package org.example.goods;
 
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.example.RestApiBuilder.GOODS_LIST;
+import static org.example.goods.RestApiBuilder.GOODS_LIST;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class GoodsListTests extends BaseApiTest {

@@ -18,6 +18,8 @@ dependencies {
     implementation("org.assertj:assertj-core:3.27.7")
     implementation("io.rest-assured:rest-assured:5.5.6")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
+    //testImplementation("org.seleniumhq.selenium:selenium-java:4.51.0")
+    testImplementation("com.codeborne:selenide:6.19.1")
 }
 
 tasks.test {
@@ -44,5 +46,22 @@ tasks.register<Test>("runAutotests") {
     }
 }
 
+tasks.register<Test>("runSeleniumTests") {
+    group = "verification"
+    description = "Запускает только Selenium-тесты (тег selenium)"
+    useJUnitPlatform {
+        includeTags("selenium")
+    }
+    dependsOn(tasks.named("testClasses"))
+}
 
+
+tasks.register<Test>("runSelenideTests") {
+    group = "verification"
+    description = "Запускает только Selenide-тесты (тег selenide)"
+    useJUnitPlatform {
+        includeTags("selenide")
+    }
+        dependsOn(tasks.named("testClasses"))
+}
 
