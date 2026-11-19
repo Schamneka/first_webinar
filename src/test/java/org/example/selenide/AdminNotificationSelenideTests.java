@@ -3,6 +3,7 @@ package org.example.selenide;
 import com.codeborne.selenide.Condition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import utils.ConfigParser;
 
 import java.time.Duration;
 
@@ -23,8 +24,8 @@ public class AdminNotificationSelenideTests extends BaseSelenideTest {
         createdName = "Товар " + System.nanoTime();
 
         open(BASE_URL + "/login");
-        $("#username").setValue("admin");
-        $("#password").setValue("secret123");
+        $("#username").setValue(ConfigParser.getProperty("admin.login"));
+        $("#password").setValue(ConfigParser.getProperty("admin.password"));
         $("button[type='submit']").click();
 
         $("#n-name").setValue(createdName);

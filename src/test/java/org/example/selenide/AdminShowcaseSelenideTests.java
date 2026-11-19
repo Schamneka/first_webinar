@@ -12,7 +12,7 @@ public class AdminShowcaseSelenideTests extends BaseSelenideTest {
 
     @Test
     void addGoodViaAdmin_goodIsShownOnShowcase() {
-        String name = "Селено-товар " + System.nanoTime();
+        String name = "Товар " + System.nanoTime();
 
         open(BASE_URL + "/login");
         $("#username").setValue("admin");

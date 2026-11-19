@@ -5,6 +5,7 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
+import utils.ConfigParser;
 
 import java.util.List;
 import java.util.Map;
@@ -13,14 +14,14 @@ import static io.restassured.RestAssured.given;
 
 public final class RestApiBuilder {
 
-    public static final String BASE_URL = "http://localhost:8080";
+    public static final String BASE_URL = ConfigParser.getProperty("base.url");
     public static final String GOODS_LIST = "/goods/list";
     public static final String GOODS_ADD = "/goods/add";
     public static final String GOODS_BY_ID = "/goods/{id}";
     public static final String LOGIN = "/login";
 
-    private static final String USER = "admin";
-    private static final String PASSWORD = "secret123";
+    private static final String USER = ConfigParser.getProperty("admin.login");
+    private static final String PASSWORD = ConfigParser.getProperty("admin.password");
 
     private static volatile String sessionCookie;
 

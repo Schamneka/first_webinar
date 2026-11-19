@@ -5,6 +5,7 @@ import org.example.goods.RestApiBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import utils.ConfigParser;
 
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Selenide.$;
@@ -20,8 +21,9 @@ public class AdminEditSelenideTests extends BaseSelenideTest {
 
     @BeforeEach
     void createGoodViaApi() {
-        goodName = "Товар " + System.nanoTime();
-        goodId = RestApiBuilder.createGood(goodName, 50);
+        goodName = ConfigParser.getProperty("product.name") + " " + System.nanoTime();
+        goodId = RestApiBuilder.createGood(goodName,
+                Double.parseDouble(ConfigParser.getProperty("product.price")));
     }
 
     /* --- 3.4. Редактирование товара и проверка изменений --- */
@@ -32,8 +34,8 @@ public class AdminEditSelenideTests extends BaseSelenideTest {
         String updatedPrice = "99";
 
         open(BASE_URL + "/login");
-        $("#username").setValue("admin");
-        $("#password").setValue("secret123");
+        $("#username").setValue(ConfigParser.getProperty("admin.login"));
+        $("#password").setValue(ConfigParser.getProperty("admin.password"));
         $("button[type='submit']").click();
 
         // Ищем инпут имени по его значению; из id инпута "nm-<id>" достаём id товара,

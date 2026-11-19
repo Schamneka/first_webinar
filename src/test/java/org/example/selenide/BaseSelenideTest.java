@@ -2,7 +2,9 @@ package org.example.selenide;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.SelenideElement;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import utils.ConfigParser;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
@@ -11,7 +13,7 @@ import static com.codeborne.selenide.Selenide.$$;
 @Tag("selenide")
 public abstract class BaseSelenideTest {
 
-    protected static final String BASE_URL = "http://localhost:8080";
+    protected static final String BASE_URL;
 
     /* --- Локаторы витрины и корзины --- */
 
@@ -23,7 +25,24 @@ public abstract class BaseSelenideTest {
     protected final SelenideElement cartCounter = $("#cart-count");
 
     static {
-        Configuration.timeout = 6000; // базовое ожидание для всех shouldBe
+        BASE_URL = ConfigParser.getProperty("base.url");
+
+        Configuration.baseUrl = BASE_URL;
+        Configuration.timeout = Long.parseLong(ConfigParser.getProperty("element.timeout"));
+        // logging.mode считан и доступен через ConfigParser.getProperty("logging.mode") —
+        // применение режима логирования здесь, по условию задачи, не требуется
+    }
+
+    @BeforeAll
+    static void printConfig() {
+        System.out.println("=== Параметры тестового окружения ===");
+        System.out.println("URL стенда:        " + ConfigParser.getProperty("base.url"));
+        System.out.println("URL API:           " + ConfigParser.getProperty("api.url"));
+        System.out.println("Тайм-аут, мс:      " + ConfigParser.getProperty("element.timeout"));
+        System.out.println("Режим логирования: " + ConfigParser.getProperty("logging.mode"));
+        System.out.println("Стартовый товар:   «" + ConfigParser.getProperty("product.name")
+                + "», цена " + ConfigParser.getProperty("product.price"));
+        // Логин и пароль в консоль не выводим — по условию задачи
     }
 
     protected int cartItemsCount() {
