@@ -1,5 +1,7 @@
 package org.example.goods;
 
+import io.qameta.allure.Step;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
@@ -29,6 +31,7 @@ public final class RestApiBuilder {
     }
 
     /** Логинится по форме один раз и кэширует сессионную куку. */
+    @Step("API: авторизация на /login (один раз, куки кэшируются)")
     private static synchronized String session() {
         if (sessionCookie == null) {
             String cookie = given()
@@ -52,18 +55,21 @@ public final class RestApiBuilder {
         return sessionCookie;
     }
 
+    @Step("API: подготовка спецификации запроса с сессией")
     public static RequestSpecification requestSpecification() {
         return new RequestSpecBuilder()
                 .setBaseUri(BASE_URL)
                 .setContentType(ContentType.JSON)
                 .setAccept(ContentType.JSON)
                 .addCookie("JSESSIONID", session())     // вместо .setAuth(preemptive().basic(...))
+                .addFilter(new AllureRestAssured())
                 .addFilter(new RequestLoggingFilter())
                 .addFilter(new ResponseLoggingFilter())
                 .build();
     }
 
     /** Создаёт товар и возвращает его id из ответа сервера. */
+    @Step("API: создание товара «{name}» с ценой {price}")
     public static long createGood(String name, double price) {
         Map<String, Object> data = given()
                 .spec(requestSpecification())           // ← спека с сессией
@@ -78,9 +84,10 @@ public final class RestApiBuilder {
         return ((Number) data.values().iterator().next()).longValue();
     }
 
+    @Step("API: удаление товара id={id}")
     public static void deleteGood(long id) {
         given()
-                .spec(requestSpecification())           // ← спека с сессией
+                .spec(requestSpecification())
                 .pathParam("id", id)
                 .delete(GOODS_BY_ID)
                 .then()
@@ -88,6 +95,7 @@ public final class RestApiBuilder {
     }
 
     /** Ищет id товара по имени; null, если не найден или ответ не удалось разобрать. */
+    @Step("API: поиск id товара по имени «{name}»")
     public static Long findGoodId(String name) {
         try {
             List<Map<String, Object>> goods = given()
@@ -112,6 +120,23 @@ public final class RestApiBuilder {
     /** Уникальное имя товара, чтобы тесты не мешали друг другу. */
     public static String uniqueName(String prefix) {
         return prefix + " " + System.nanoTime();
+    }
+
+    /** Удаление всех товаров. */
+    @Step("API: очистить список товаров (удалить все)")
+    public static void deleteAllGoods() {
+        List<Map<String, Object>> goods = given()
+                .spec(requestSpecification())
+                .get(GOODS_LIST)
+                .then()
+                .statusCode(200)
+                .extract()
+                .jsonPath()
+                .getList("goods");
+
+        for (Map<String, Object> good : goods) {
+            deleteGood(((Number) good.get("id")).longValue());
+        }
     }
 }
 

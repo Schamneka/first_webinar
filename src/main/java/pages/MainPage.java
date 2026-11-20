@@ -5,6 +5,7 @@ import com.codeborne.selenide.DragAndDropOptions;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 
 import java.time.Duration;
 import java.util.Comparator;
@@ -34,29 +35,34 @@ public class MainPage {
 
     /* --- Методы взаимодействия --- */
 
+    @Step("Открыть витрину")
     public MainPage openPage(String baseUrl) {
         Selenide.open(baseUrl);
         return this;
     }
 
     // клик по ссылке «Администрирование»
+    @Step("Клик по ссылке «Администрирование»")
     public void clickAdminLink() {
         adminLink.click();
     }
 
     // клик по кнопке корзины — открывает модалку
+    @Step("Клик по кнопке корзины")
     public MainPage clickCartButton() {
         cartButton.click();
         return this;
     }
 
     // клик «В корзину» на первой карточке
+    @Step("Клик «В корзину» на первой карточке")
     public MainPage clickAddToCart() {
         firstAddToCartBtn.click();
         return this;
     }
 
     // инпут количества первой карточки: ввести значение с клавиатуры (sendKeys)
+    @Step("Ввести количество {qty} в инпут первой карточки")
     public MainPage setQty(String qty) {
         firstQtyInput.setValue(qty);
         firstQtyInput.pressEnter();
@@ -64,29 +70,34 @@ public class MainPage {
     }
 
     // клики по «−» и «+» первой карточки
+    @Step("Клик «−» на первой карточке")
     public MainPage clickMinus() {
         firstMinusBtn.click();
         return this;
     }
 
+    @Step("Клик «+» на первой карточке")
     public MainPage clickPlus() {
         firstPlusBtn.click();
         return this;
     }
 
     // закрыть модалку корзины крестиком
+    @Step("Закрыть модалку корзины крестиком")
     public MainPage closeModal() {
         closeModal.click();
         return this;
     }
 
     // оформить заказ
+    @Step("Нажать «Оформить заказ»")
     public MainPage clickMakeOrder() {
         makeOrderBtn.click();
         return this;
     }
 
     // drag-and-drop первой карточки на кнопку корзины (кейсы 1.1 из DnD-тестов)
+    @Step("Перетащить первую карточку на кнопку корзины")
     public MainPage dragFirstCardToCart() {
         firstCard.dragAndDrop(DragAndDropOptions.to(cartButton));
         return this;
@@ -100,6 +111,7 @@ public class MainPage {
     }
 
     /** Самый дешёвый товар на витрине. */
+    @Step("Найти самый дешёвый товар на витрине")
     public SelenideElement cheapestCard() {
         return cards().stream()
                 .min(Comparator.comparingInt(c -> Integer.parseInt(c.attr("data-price"))))
@@ -109,6 +121,7 @@ public class MainPage {
     /* --- Взаимодействие с произвольной карточкой --- */
 
     /** Ввести количество в инпут конкретной карточки. */
+    @Step("Ввести количество {qty} в инпут выбранной карточки")
     public MainPage setQtyOnCard(SelenideElement card, String qty) {
         SelenideElement qtyInput = card.$("input.qty-input");
         qtyInput.setValue(qty);
@@ -117,12 +130,14 @@ public class MainPage {
     }
 
     /** Клик «В корзину» на конкретной карточке. */
+    @Step("Клик «В корзину» на выбранной карточке")
     public MainPage addToCartOnCard(SelenideElement card) {
         card.$("button[data-action='add-to-cart']").shouldBe(Condition.visible).click();
         return this;
     }
 
     /** Открыть корзину и дождаться видимости её содержимого. */
+    @Step("Открыть корзину и дождаться её содержимого")
     public MainPage openCart() {
         cartButton.click();
         cartModal.shouldBe(Condition.visible);
@@ -130,6 +145,7 @@ public class MainPage {
     }
 
     /** Тост с заданным текстом появился и виден. */
+    @Step("Проверка: показан тост «{message}»")
     public MainPage assertToastShown(String message) {
         Selenide.$$(".toast").findBy(Condition.text(message))
                 .shouldBe(Condition.visible, Duration.ofSeconds(6));
@@ -150,11 +166,13 @@ public class MainPage {
 
     /* --- Встроенные базовые проверки --- */
 
+    @Step("Проверка: заголовок витрины виден")
     public MainPage assertTitleVisible() {
         title.shouldBe(Condition.visible);
         return this;
     }
 
+    @Step("Проверка: счётчик корзины равен {expected}")
     public MainPage assertCounter(String expected) {
         cartCounter.shouldHave(Condition.exactText(expected));
         return this;

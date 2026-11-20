@@ -1,7 +1,9 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
+
 plugins {
     id("java")
+    id("io.qameta.allure") version "2.11.2"
 }
 
 group = "org.example"
@@ -11,6 +13,13 @@ repositories {
     mavenCentral()
 }
 
+allure {
+    version.set("2.29.0")          // версия allure-java (зависимостей и генератора)
+    adapter {
+        aspectjWeaver.set(true)    // вплетает аспекты @Step
+    }
+}
+
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -18,8 +27,11 @@ dependencies {
     implementation("org.assertj:assertj-core:3.27.7")
     implementation("io.rest-assured:rest-assured:5.5.6")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
-    //testImplementation("org.seleniumhq.selenium:selenium-java:4.51.0")
     implementation("com.codeborne:selenide:6.19.1")
+
+    implementation("io.qameta.allure:allure-selenide:2.24.0")
+    implementation("io.qameta.allure:allure-rest-assured:2.24.0")
+    testImplementation("io.qameta.allure:allure-junit5:2.24.0")
 }
 
 tasks.test {
@@ -55,13 +67,12 @@ tasks.register<Test>("runSeleniumTests") {
     dependsOn(tasks.named("testClasses"))
 }
 
-
 tasks.register<Test>("runSelenideTests") {
     group = "verification"
     description = "Запускает только Selenide-тесты (тег selenide)"
     useJUnitPlatform {
         includeTags("selenide")
     }
-        dependsOn(tasks.named("testClasses"))
+    dependsOn(tasks.named("testClasses"))
 }
 

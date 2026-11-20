@@ -2,6 +2,8 @@ package org.example.selenide;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import utils.ConfigParser;
@@ -30,7 +32,14 @@ public abstract class BaseSelenideTest {
         Configuration.baseUrl = BASE_URL;
         Configuration.timeout = Long.parseLong(ConfigParser.getProperty("element.timeout"));
         // logging.mode считан и доступен через ConfigParser.getProperty("logging.mode") —
-        // применение режима логирования здесь, по условию задачи, не требуется
+    }
+
+    @BeforeAll
+    static void setupAllureListener() {
+        SelenideLogger.addListener("AllureSelenide",
+                new AllureSelenide()
+                        .screenshots(true)
+                        .savePageSource(true));
     }
 
     @BeforeAll
@@ -42,7 +51,7 @@ public abstract class BaseSelenideTest {
         System.out.println("Режим логирования: " + ConfigParser.getProperty("logging.mode"));
         System.out.println("Стартовый товар:   «" + ConfigParser.getProperty("product.name")
                 + "», цена " + ConfigParser.getProperty("product.price"));
-        // Логин и пароль в консоль не выводим — по условию задачи
+        // Логин и пароль в консоль не выводим
     }
 
     protected int cartItemsCount() {

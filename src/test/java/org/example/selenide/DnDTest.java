@@ -3,6 +3,7 @@ package org.example.selenide;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.DragAndDropOptions;
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.interactions.Actions;
@@ -92,12 +93,14 @@ public class DnDTest extends BaseSelenideTest {
     /* --- Общие помощники --- */
 
     /** Выполняет переданный вариант перетаскивания и проверяет, что товар попал в корзину. */
+    @Step("Добавить товар в корзину drag-and-drop ({variant}) и проверить счётчик")
     private void addToCartViaDnd(Runnable drag) {
         drag.run();
         $("#cart-count").shouldHave(exactText("1"));
     }
 
     /** X (axis=true) или Y центр элемента в окне просмотра. */
+    @Step("Определить центр элемента для расчёта траектории")
     private static int center(SelenideElement element, boolean axisX) {
         return axisX
                 ? element.getCoordinates().inViewPort().getX() + element.getSize().getWidth() / 2

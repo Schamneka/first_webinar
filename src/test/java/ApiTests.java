@@ -1,5 +1,7 @@
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import org.example.goods.RestApiBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,12 +20,27 @@ import static org.hamcrest.Matchers.hasItem;
 @Tag("autotests")
 public class ApiTests {
 
+    private String createdGoodName;    // имя товара, созданного в текущем тесте
+
     @BeforeAll
     static void setup() {
         RestAssured.requestSpecification = RestApiBuilder.requestSpecification();
+        //RestApiBuilder.deleteAllGoods();
+    }
+
+    @AfterEach
+    void cleanup() {
+        if (createdGoodName != null) {
+            Long id = RestApiBuilder.findGoodId(createdGoodName);
+            if (id != null) {
+                RestApiBuilder.deleteGood(id);
+            }
+            createdGoodName = null;
+        }
     }
 
     /** Хелпер: создаёт товар через POST /goods/add и проверяет код ответа. */
+    @Step("API: создание товара «{name}» с ценой {price} через /goods/add")
     private static void addGood(String name, double price) {
         given()
                 .body(Map.of("name", name, "price", price))
@@ -59,7 +76,7 @@ public class ApiTests {
     @Test
     void addedGoodShouldAppearInList_restAssuredChecks() {
         String name = "Ноутбук " + System.currentTimeMillis();
-        addGood(name, 1500.0);
+        addGood(name, 1500);
 
         given()
                 .when()
@@ -67,14 +84,14 @@ public class ApiTests {
                 .then()
                 .statusCode(200)
                 .body("goods.name", hasItem(name))
-                .body("goods.find { it.name == '%s' }.price", withArgs(name), equalTo(1500.0));
+                .body("goods.find { it.name == '%s' }.price", withArgs(name), equalTo(1500.0f));
     }
 
     /** 4. Тот же сценарий, но проверки через AssertJ. */
     @Test
     void addedGoodShouldAppearInList_assertj() {
         String name = "Смартфон " + System.currentTimeMillis();
-        addGood(name, 900.0);
+        addGood(name, 900);
 
         List<Map<String, Object>> goods = given()
                 .when()
@@ -94,6 +111,6 @@ public class ApiTests {
                 .as("товар '%s' должен быть в списке", name)
                 .isNotNull()
                 .containsEntry("name", name)
-                .containsEntry("price", 900.0);
+                .containsEntry("price", 900.0f);
     }
 }

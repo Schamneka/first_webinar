@@ -39,7 +39,7 @@ public class OrderSelenideTests extends BaseSelenideTest {
         cartButton.shouldBe(visible).click();
         cartItemsContainer.shouldBe(visible);
 
-        // Нажимаем кнопку «Оформить заказ» — вот её раньше не было в тесте
+        // Нажимаем кнопку «Оформить заказ»
         $(byText("Оформить заказ")).shouldBe(visible).click();
 
         // Ждём JS Alert, читаем текст и подтверждаем

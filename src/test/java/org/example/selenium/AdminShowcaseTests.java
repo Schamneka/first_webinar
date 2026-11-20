@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import static com.codeborne.selenide.Selenide.sleep;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AdminShowcaseTests extends BaseSeleniumTest {
@@ -22,9 +23,9 @@ public class AdminShowcaseTests extends BaseSeleniumTest {
 
     @Test
     void addGoodViaAdmin_goodIsShownOnShowcase() {
-        String name = "Селено-товар " + System.nanoTime();
+        String name = "Товар " + System.nanoTime();
 
-        driver.get(BASE_URL + "/admin");
+        driver.get(BASE_URL + "/login");
         adminLogin("admin", "secret123");
         adminAddGood(name, "123");
 
@@ -46,6 +47,7 @@ public class AdminShowcaseTests extends BaseSeleniumTest {
     }
 
     private void adminAddGood(String name, String price) {
+        sleep(1000);
         driver.findElement(adminNameInput).sendKeys(name);
         driver.findElement(adminPriceInput).sendKeys(price);
         driver.findElement(adminAddBtn).click();
