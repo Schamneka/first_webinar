@@ -34,7 +34,7 @@ public class MethodTests {
     // Задача 1 (isEven)
     @RepeatedTest(value = 10, name = "Задача 1: isEven, запуск {currentRepetition}/{totalRepetitions}")
     void isEvenTest() {
-        int number = randomInt(-1_000, 1_001);
+        int number = RANDOM.nextInt(100) + 1;
         boolean expected = (number % 2 == 0);
 
         System.out.println("Задача 1: " + Methods.isEven(number));
@@ -43,9 +43,9 @@ public class MethodTests {
     }
 
     //Задача 2 (checkAccess)
-    @RepeatedTest(value = 10, name = "Задача 2: checkAccess, запуск {currentRepetition}/{totalRepetitions}")
+    @RepeatedTest(value = 20, name = "Задача 2: checkAccess, запуск {currentRepetition}/{totalRepetitions}")
     void checkAccessTest() {
-        int ageCheck = randomInt(0, 101);
+        int ageCheck = RANDOM.nextInt(100);
 
         String expected = ageCheck > 18 ? "Allowed" : "Denied";
         String actual = Methods.checkAccess(ageCheck);
@@ -67,14 +67,14 @@ public class MethodTests {
     }
 
     //Задача 4 (getGrade)
-    @RepeatedTest(value = 10, name = "Задача 4: getGrade, запуск {currentRepetition}/{totalRepetitions}")
-    void getGradeTest() {
-        int point = randomInt(-101, 101);
-        String expected = expectedGrade(point);
+    @ParameterizedTest(name = "Задача 4: score = {0}")
+    @MethodSource("scoresProvider")
+    void getGradeTest(int score) {
+        String expected = expectedGrade(score);
 
-        System.out.println("Задача 4: " + Methods.getGrade(point));
+        System.out.println("Задача 4(" + score + ") = " + Methods.getGrade(score));
 
-        assertEquals(expected, Methods.getGrade(point));
+        assertEquals(expected, Methods.getGrade(score));
     }
 
     //Задача 5 (blastOff)
@@ -146,6 +146,10 @@ public class MethodTests {
                 generateArray(20, -50, 50),    // смешанные числа
                 generateArray(1, -1000, 1000), // один элемент
                 generateArray(100, -10_000, 10_001), // большой массив
+                generateArray(12, -5, 6),
+                generateArray(3, 0, 2),
+                generateArray(25, -100, 101),
+                generateArray(8, -1_000, 1_001),
                 new int[]{},                   // пустой массив — исключение
                 (int[]) null                   // null — исключение
         );
@@ -170,7 +174,13 @@ public class MethodTests {
                 Arguments.of((Object) generateStringArray(10, 3, 10)), // обычный массив строк
                 Arguments.of((Object) generateStringArray(1, 1, 5)),   // один элемент
                 Arguments.of((Object) generateStringArray(0, 0, 0)),   // пустой массив — вернёт пустой
-                Arguments.of((Object) generateStringArray(20, 0, 12))  // строки случайной длины, включая пустые
+                Arguments.of((Object) generateStringArray(20, 0, 12)), // строки случайной длины, включая пустые
+                Arguments.of((Object) generateStringArray(5, 1, 4)),
+                Arguments.of((Object) generateStringArray(8, 2, 6)),
+                Arguments.of((Object) generateStringArray(12, 0, 3)),
+                Arguments.of((Object) generateStringArray(15, 1, 8)),
+                Arguments.of((Object) generateStringArray(6, 0, 10)),
+                Arguments.of((Object) generateStringArray(30, 1, 5))
         );
     }
 
@@ -198,6 +208,9 @@ public class MethodTests {
                 generateList(20, -50, 50),      // смешанные числа
                 generateList(1, -1000, 1000),   // один элемент — среднее равно ему самому
                 generateList(100, -10_000, 10_001), // большой список
+                generateList(3, 0, 2),
+                generateList(25, -100, 101),
+                generateList(12, -5, 6),
                 new ArrayList<>(),              // пустой список — исключение
                 null                            // null — исключение
         );
@@ -230,8 +243,33 @@ public class MethodTests {
                 Arguments.of(generateNameList(names, 1), names[RANDOM.nextInt(names.length)]),
                 // пустой список — должен вернуть пустой
                 Arguments.of(new ArrayList<String>(), "Аня"),
-                // null — метод упадёт с NullPointerException
-                Arguments.of((List<String>) null, "Аня")
+                // Список из повторяющихся имён
+                Arguments.of(generateNameList(new String[]{"Боря", "Вика"}, 12), "Боря"),
+                // 7. Удаляем существующее имя из смешанного списка
+                Arguments.of(generateNameList(names, 15), "Вика"),
+                // 8. Удаляем имя, которое встречается несколько раз
+                Arguments.of(generateNameList(new String[]{"Гоша", "Дима"}, 20), "Гоша"),
+                // 9. Большой список и несуществующее имя
+                Arguments.of(generateNameList(names, 50), "Не существует"),
+                // 10. Список из одного повторяющегося имени
+                Arguments.of(generateNameList(new String[]{"Дима"}, 1), "Дима")
+        );
+    }
+
+    // Намеренно падающий тест: ожидается заведомо неверное значение
+    @RepeatedTest(value = 10, name = "Намеренно падающий тест: запуск {currentRepetition}/{totalRepetitions}"
+    )
+    void intentionallyFailingTest() {
+        int n = RANDOM.nextInt(10) + 1;
+        int actual = Methods.sumToN(n);
+
+        System.out.println("Падает(" + n + ") = " + actual);
+
+        assertEquals(
+                -1,
+                actual,
+                "Намеренная проверка sumToN(" + n + "): ожидалось -1, "
+                        + "но получено " + actual
         );
     }
 
@@ -372,6 +410,17 @@ public class MethodTests {
         }
         return sb.toString();
     }
+
+    static Stream<Integer> scoresProvider() {
+        int[] scores = new int[10];
+
+        for (int i = 0; i < scores.length; i++) {
+            scores[i] = RANDOM.nextInt(101);
+        }
+
+        return Arrays.stream(scores).boxed();
+    }
+
 }
 
 

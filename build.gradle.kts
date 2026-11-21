@@ -1,7 +1,9 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
+
 plugins {
     id("java")
+    id("io.qameta.allure") version "2.11.2"
 }
 
 group = "org.example"
@@ -11,36 +13,29 @@ repositories {
     mavenCentral()
 }
 
+allure {
+    version.set("2.29.0")          // версия allure-java (зависимостей и генератора)
+    adapter {
+        aspectjWeaver.set(true)    // вплетает аспекты @Step
+    }
+}
+
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
+    implementation("org.assertj:assertj-core:3.27.7")
+    implementation("io.rest-assured:rest-assured:5.5.6")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
+    implementation("com.codeborne:selenide:6.19.1")
+
+    implementation("io.qameta.allure:allure-selenide:2.24.0")
+    implementation("io.qameta.allure:allure-rest-assured:2.24.0")
+    testImplementation("io.qameta.allure:allure-junit5:2.24.0")
 }
 
 tasks.test {
     useJUnitPlatform()
-}
-
-// Задача 1: запускает все тесты в проекте
-tasks.register<Test>("runAllTests") {
-    group = "verification"
-    description = "Запускает все тесты проекта"
-    useJUnitPlatform()
-    testClassesDirs = sourceSets["test"].output.classesDirs
-    classpath = sourceSets["test"].runtimeClasspath
-}
-
-// Задача 2: запускается после завершения первой и пишет в консоль сообщение
-tasks.register("afterTests") {
-    group = "verification"
-    description = "Печатает сообщение после прогона тестов"
-    doLast {
-        println("Test run is over")
-    }
-}
-
-tasks.named("afterTests") {
-    dependsOn("runAllTests")
 }
 
 // Ручной чекер: TEST PASSED / TEST FAILED
@@ -63,5 +58,21 @@ tasks.register<Test>("runAutotests") {
     }
 }
 
+tasks.register<Test>("runSeleniumTests") {
+    group = "verification"
+    description = "Запускает только Selenium-тесты (тег selenium)"
+    useJUnitPlatform {
+        includeTags("selenium")
+    }
+    dependsOn(tasks.named("testClasses"))
+}
 
+tasks.register<Test>("runSelenideTests") {
+    group = "verification"
+    description = "Запускает только Selenide-тесты (тег selenide)"
+    useJUnitPlatform {
+        includeTags("selenide")
+    }
+    dependsOn(tasks.named("testClasses"))
+}
 
